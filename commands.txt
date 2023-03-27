@@ -1,0 +1,50 @@
+    for getAllTours functions
+    
+    1.filtering the data from the input we get from the query string
+    --> i>const query = Tour.find().where('duration').equals(req.query.duration)
+    --> ii>
+    const tours = await Tour.find(req.query)
+
+    const queryObj = {...req.query};
+    //first destructuring and then make it an object
+    const excluded = ['sort','fields','skip','page','limit'];
+    excluded.forEach(el => delete queryObj[el]);
+
+    2. filtering the data with qualities
+    let queryStr = JSON.stringify(queryObj);
+    console.log(queryStr)
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match =>`$${match}`);
+    let query = Tour.find(JSON.parse(queryStr));
+
+    3.Sorting
+    if(req.query.sort){
+      const sortBy = req.query.sort
+      console.log(sortBy)
+      query = query.sort(sortBy)
+    }
+    console.log(req.query.sort);
+    query = query.sort(req.query.sort);
+
+    const query = Tour.find({}).sort(req.query.sort)
+
+    limiting the fields
+    const limit = Tour.find({},{"duration":1,"ratingQuantity":1,"ratingAverage":1});
+
+    if(req.query.fields){
+      const field = req.query.fields;
+      query = query.select(field);
+    }
+
+    Pagination
+    const page = +req.query.page
+    const limit = +req.query.limit
+    const skip = (page-1)*limit;
+    console.log(limit)
+    const pagination = Tour.find({}).skip(skip).limit(limit);
+
+    if(req.query.page){
+      const numtours = await Tour.countDocuments();
+      if(skip > numtours){
+        throw new Error("This Page is not available")
+      }
+    }
