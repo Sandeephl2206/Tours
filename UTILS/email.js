@@ -10,7 +10,7 @@ const sendEmail = async options =>{
         requireTLS:true,
         auth:{
             user: 'sandyhl2206@gmail.com',
-            pass: "gfjmqqlngvpypcep"
+            pass: ""
         }
     });
     
