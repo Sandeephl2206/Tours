@@ -11,6 +11,14 @@ const sendEmail = require("../UTILS/email")
 const signToken = id =>{
     return jwt.sign({ id }, JSON_secret_key)
 }
+const createAndSendToken = (user,statusCode,res) =>{
+    const token = signToken(user._id);
+    res.status(statusCode).json({
+        status: "User Regsitered successfully",
+        token,
+        data: user
+    })
+}
 const registerUser = catchAsync(async(req, res) => {
     const newUser = await User.create({
         name: req.body.name,
@@ -21,13 +29,7 @@ const registerUser = catchAsync(async(req, res) => {
         role :req.body.role, 
     });
     console.log(newUser._id)
-    const token = signToken(newUser._id);
-    console.log(token)
-    res.status(201).json({
-        status: "User Regsitered successfully",
-        token,
-        data: newUser
-    })
+    createAndSendToken(newUser,201,res);
 })
 
 const login = catchAsync(async (req,res,next)=>{
@@ -155,11 +157,27 @@ const resetPassword = async (req,res,next) =>{
         })
     }
 }
-const updatePassword = (req,res) =>{
+const updatePassword = async (req,res) =>{
     //we are not using findbyidandupdate bcoz if do by this document middleware will not works 
-    
+    const user = await User.findById(req.params.id).select("+password");
+    if(req.body.password === user.password){
+        user.password = req.body.NewPassword
+        console.log(user)
+        await user.save({ validateBeforeSave: false});
+        res.status(200).json({
+            status : "Success",
+            mssage: "Password changed sunccesfully" 
+        })
+    }
+    else{
+        res.status(404).json({
+            status : "Success",
+            mssage: "Password invalid" 
+        })
+    }
+   
 }
-module.exports = { registerUser,login,protectingRoutes,restrictingtour,forgetPassword,resetPassword};
+module.exports = { registerUser,login,protectingRoutes,restrictingtour,forgetPassword,resetPassword,updatePassword};
 
 
 //note - jwt.verify will also return the issued timing of the token

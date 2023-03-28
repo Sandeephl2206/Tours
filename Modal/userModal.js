@@ -73,7 +73,7 @@ UserSchema.methods.createPasswordResetToken = function() {
     return resetToken;
 }
 UserSchema.pre('save',function(next){
-    if(!this.isModified(password)) return next();
+    if(!this.isModified(this.password)) return next();
     //Note --  - 1000 is done bcoz sometimes it is possible that jwt token is issued before saving the password to the database
     this.changedPasswordAt = Date.now() - 1000;
     next();
