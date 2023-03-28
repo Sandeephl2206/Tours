@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
+const crypto = require("crypto")
 const validator = require("validator")
-const bcrypt = require("bcryptjs")
+const bcrypt = require("bcryptjs");
+const { reset } = require("nodemon");
 const UserSchema = mongoose.Schema({
     name:{
         type:String,
@@ -30,8 +32,14 @@ const UserSchema = mongoose.Schema({
             message : "Passwords does not match"
         }
     },
-    
-    passwordChangedAt :{ 
+    role:{
+        type:String,
+        enum : ["user","guide","lead-guide"],
+        default : "user",
+    },
+    passwordResetToken : String,
+    passwordExpires : Date,
+    passwordChangedAt : { 
         type: Date,
 }
 })
@@ -55,5 +63,20 @@ UserSchema.methods.changedPasswordAt = function(jwttimestamp){
      }
     return false;
 }
+
+UserSchema.methods.createPasswordResetToken = function() {
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex')    
+    console.log("resetToken:",resetToken)
+    console.log("passwordResetToken:",this.passwordResetToken)         
+    this.passwordExpires = Date.now() + 10*60*1000;
+    return resetToken;
+}
+UserSchema.pre('save',function(next){
+    if(!this.isModified(password)) return next();
+    //Note --  - 1000 is done bcoz sometimes it is possible that jwt token is issued before saving the password to the database
+    this.changedPasswordAt = Date.now() - 1000;
+    next();
+})
 
 module.exports = mongoose.model("User",UserSchema)  

@@ -12,7 +12,11 @@ router
 .route("/")
 .get(authController.protectingRoutes,tourController.getAllTours)
 .post(tourController.checkBody,tourController.createTour);
-router.route("/:id").get(tourController.getToursById).patch(tourController.updateTour).delete(tourController.deleteTour);
+router
+.route("/:id")
+.get(tourController.getToursById)
+.patch(tourController.updateTour)
+.delete(authController.protectingRoutes,authController.restrictingtour('admin','lead-guide'),tourController.deleteTour);
 
 
 module.exports = router;

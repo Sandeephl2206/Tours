@@ -9,6 +9,10 @@ router.route("/")
 .get(userController.GetAllUsers)
 .post(userController.createNewUsers)
 
+router.post("/forget-password",authController.forgetPassword);
+router.patch("/reset-password/:token",authController.resetPassword);
+//because we have to update the new passowrd in ourn database for the same user
+
 router.route("/:id")
 .get(userController.getUsersById)
 .patch(userController.updateUsers)
