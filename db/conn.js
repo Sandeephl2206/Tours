@@ -15,7 +15,7 @@ const connectdb = async ()=>{
 //importing data from the file and saving in the database
 //Read Json File
 console.log(`${__dirname}/../starter/dev-data/data/tours-simple.json`)
-const tours = JSON.parse(fs.readFileSync(`${__dirname}/../starter/dev-data/data/tours-simple.json`,'utf-8'))
+const tours = JSON.parse(fs.readFileSync(`${__dirname}/../starter/dev-data/data/tours.json`,'utf-8'))
 const importData = async ()=>{
     try {
         await connectdb();

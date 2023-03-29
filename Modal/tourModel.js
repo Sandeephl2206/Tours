@@ -71,6 +71,28 @@ const tourSchema = mongoose.Schema({
         default:Date.now()
     },
     startDates : [Date],
+    //Embedded referencing modeling example
+    startLocation : {
+        type: {
+            type: String,
+            default: 'Point',
+            enum: ['Point']
+        },
+        coordinates :[Number],
+        address: String,
+        descripton: String
+    },
+    locations : [{
+        type: {
+            type: String,
+            default: 'Point',
+            enum: ['Point']
+        },
+        coordinates :[Number],
+        address: String,
+        descripton: String,
+        day: Number
+    }]
 },
     {
         toJSON: {virtuals:true},

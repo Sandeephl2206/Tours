@@ -11,7 +11,9 @@ router.route("/")
 
 router.post("/forget-password",authController.forgetPassword);
 router.patch("/reset-password/:token",authController.resetPassword);
+router.patch("/update-info",authController.protectingRoutes,authController.updateMe)
 router.patch("/update-password/:id",authController.updatePassword)
+router.delete("/delete-user",authController.protectingRoutes,authController.deleteUser)
 //because we have to update the new passowrd in ourn database for the same user
 
 router.route("/:id")

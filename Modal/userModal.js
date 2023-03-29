@@ -37,6 +37,10 @@ const UserSchema = mongoose.Schema({
         enum : ["user","guide","lead-guide"],
         default : "user",
     },
+    active : {
+        type: Boolean,
+        default : true
+    },
     passwordResetToken : String,
     passwordExpires : Date,
     passwordChangedAt : { 
@@ -72,10 +76,15 @@ UserSchema.methods.createPasswordResetToken = function() {
     this.passwordExpires = Date.now() + 10*60*1000;
     return resetToken;
 }
+
 UserSchema.pre('save',function(next){
     if(!this.isModified(this.password)) return next();
     //Note --  - 1000 is done bcoz sometimes it is possible that jwt token is issued before saving the password to the database
     this.changedPasswordAt = Date.now() - 1000;
+    next();
+})
+UserSchema.pre(/^find/,function(next){
+    this.find({ active:{ $ne:false }});
     next();
 })
 
