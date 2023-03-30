@@ -48,24 +48,28 @@ class APIfeatures {
   }
 }
 
-const getAllTours = catchAsync(async (req, res, next) => {
-  //creatig an object for class
-  //try catch method are replaced by catchAync function here
-  const features = new APIfeatures(Tour.find(), req.query)
-    .filter()
-    .sort()
-    .limit()
-    .pagination();
-    console.log(process.env)
-  const tours = await features.query;
-  res.status(200).json({
-    status: "success",
-    data: tours,
-  });
-});
+const getAllTours = async (req, res) => {
+  try {
+    const features = new APIfeatures(Tour.find(), req.query)
+      .filter()
+      .sort()
+      .limit()
+      .pagination();
+    const tours = await features.query;
+    res.status(200).json({
+      status: "success",
+      data: tours,
+    });
+  } catch (error) {
+    res.json(error);
+  }
+};
+//creatig an object for class
+//try catch method are replaced by catchAync function here
 
 const getToursById = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findOne({ _id: req.params.id });
+  const tour = await Tour.findOne({ _id: req.params.id }).populate('reviews')
+  //for the getAllTours also we have to create so we will make a populate query middleware
   console.log(tour);
   if (!tour) {
     return next(new AppError("No tours availbale for this ID", 404));

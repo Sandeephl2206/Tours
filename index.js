@@ -4,6 +4,7 @@ const app = express();
 const morgan = require("morgan")
 const tourRouter = require("./Routes/tourRoutes");
 const userRouter = require("./Routes/userRoutes");
+const reviewRouter = require("./Routes/reviewRoutes")
 const AppError = require("./errorHamdling/appError")
 const globalErrorHandler = require("./Controller/errorController")
 const {connectdb} = require("./db/conn");
@@ -24,7 +25,7 @@ app.use(morgan("tiny"))
 
 //Rate limiter for security
 const Limiter = rateLimiter({
-    max : 2,
+    max : 100,
     windowMs : 60 * 60 * 1000,
     message: "Request limit crossed please try agaim after 1 hour"
 })
@@ -32,7 +33,7 @@ app.use("/api",Limiter)
 
 //body parser - reading data from body into req.body
 app.use(express.json())
-
+ 
 //data sanitization against NoSQL query injection
 app.use(mongoSanitize())
 
@@ -59,6 +60,7 @@ app.use((req,res,next)=>{
 //Routing
 app.use("/api/v1/tours",tourRouter)
 app.use("/api/v1/users",userRouter)
+app.use("/api/v1/reviews",reviewRouter)
 
 // 2.)Routing
 // app.get("/api/v1/tours",getAllTours)
