@@ -21,8 +21,8 @@ router
 .route("/:id")
 .get(tourController.getToursById)
 .patch(tourController.updateTour)
-.delete(authController.protectingRoutes,authController.restrictingtour('admin','lead-guide'),tourController.deleteTour);
-
+// .delete(authController.protectingRoutes,authController.restrictingtour('admin','lead-guide'),tourController.deleteTour);
+.delete(tourController.deleteTour);
 // router.route('/:tourid/reviews').post(reviewController.createReview)
 
 

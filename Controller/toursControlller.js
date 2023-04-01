@@ -1,6 +1,8 @@
 const fs = require("fs");
 const AppError = require("../errorHamdling/appError");
-const Tour = require("../Modal/tourModel");
+const Tour = require("../Modal/tourModel"); 
+const factory = require("factory-handler")
+const SelfFactory = require("./factoryHandler")
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/../starter/dev-data/data/tours-simple.json`)
 );
@@ -67,52 +69,58 @@ const getAllTours = async (req, res) => {
 //creatig an object for class
 //try catch method are replaced by catchAync function here
 
-const getToursById = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findOne({ _id: req.params.id }).populate('reviews')
-  //for the getAllTours also we have to create so we will make a populate query middleware
-  console.log(tour);
-  if (!tour) {
-    return next(new AppError("No tours availbale for this ID", 404));
-  }
-  res.status(200).json({
-    status: "success",
-    data: tour,
-  });
-});
+const getToursById = SelfFactory.getOne(Tour,'review')
+// const getToursById = catchAsync(async (req, res, next) => {
+//   const tour = await Tour.findOne({ _id: req.params.id }).populate('reviews')
+//   //for the getAllTours also we have to create so we will make a populate query middleware
+//   console.log(tour);
+//   if (!tour) {
+//     return next(new AppError("No tours availbale for this ID", 404));
+//   }
+//   res.status(200).json({
+//     status: "success",
+//     data: tour,
+//   });
+// });
 
-const createTour = catchAsync(async (req, res, next) => {
-  const newTour = await Tour.create(req.body);
-  console.log(newTour);
-  res.status(200).json({
-    status: "success",
-    result: newTour,
-  });
-});
+const createTour = factory.createOne(Tour);
+// const createTour = catchAsync(async (req, res, next) => {
+//   const newTour = await Tour.create(req.body);
+//   console.log(newTour);
+//   res.status(200).json({
+//     status: "success",
+//     result: newTour,
+//   });
+// });
 
-const updateTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-  if (!tour) {
-    return next(new AppError("No tours availbale for this ID", 404));
-  }
-  res.status(200).json({
-    status: "success",
-    result: tour,
-  });
-});
+const updateTour = factory.updateOne(Tour)
+// const updateTour = catchAsync(async (req, res, next) => {
+//   const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
+//     new: true,
+//     runValidators: true,
+//   });
+//   if (!tour) {
+//     return next(new AppError("No tours availbale for this ID", 404));
+//   }
+//   res.status(200).json({
+//     status: "success",
+//     result: tour,
+//   });
+// });
 
-const deleteTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findByIdAndDelete(req.params.id);
-  if (!tour) {
-    return next(new AppError("No tours availbale for this ID", 404));
-  }
-  res.status(200).json({
-    status: "success",
-    result: null,
-  });
-});
+// using factory handler we can replace the delete function or module as
+
+const deleteTour = factory.deleteOne(Tour);
+// const deleteTour = catchAsync(async (req, res, next) => {
+//   const tour = await Tour.findByIdAndDelete(req.params.id);
+//   if (!tour) {
+//     return next(new AppError("No tours availbale for this ID", 404));
+//   }
+//   res.status(200).json({
+//     status: "success",
+//     result: null,
+//   });
+// });
 
 //middleware functions
 const checkid = (req, res, next, val) => {
