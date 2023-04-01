@@ -5,7 +5,7 @@ const { argv } = require("process");
 
 const connectdb = async ()=>{
     try {
-       await mongoose.connect("mongodb+srv://sandy:sandy@tours.5loohln.mongodb.net/tourscollection?retryWrites=true&w=majority");
+       await mongoose.connect("mongodb+srv://sandy:<password>@tours.5loohln.mongodb.net/,<collection_name>?retryWrites=true&w=majority");
        console.log("db connected");
     } catch (error) {
         throw new Error(error)
